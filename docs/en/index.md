@@ -4,10 +4,10 @@ This extension extend your [Nette](http://nette.org) forms with phone control fi
 
 ## Installation
 
-The best way to install ipub/form-phone is using  [Composer](http://getcomposer.org/):
+The best way to install ipub/form-phone is using [Composer](http://getcomposer.org/):
 
 ```sh
-$ composer require ipub/form-phone
+$ composer require urbitech/form-phone
 ```
 
 After that you have to register extension in config.neon.
@@ -102,13 +102,6 @@ List of allowed phone types is available in [iPublikuj:Phone!](https://github.co
 Phone field can be rendered as usual, or manually with partial rendering:
 
 ```html
-{form yourFormWithPhoneField}
-    // ...
-
-    {label phone /}
-    {input phone:country}
-    {input phone:number}
-
-    // ...
-{/form}
+{form yourFormWithPhoneField} // ... {label phone /} {input phone:country}
+{input phone:number} // ... {/form}
 ```

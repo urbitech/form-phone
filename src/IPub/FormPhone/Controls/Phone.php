@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Phone.php
  *
@@ -12,7 +13,7 @@
  * @date           15.12.15
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\FormPhone\Controls;
 
@@ -143,7 +144,6 @@ class Phone extends Forms\Controls\TextInput
 
 		if (strtoupper($country) === 'AUTO') {
 			$this->allowedCountries = ['AUTO'];
-
 		} elseif (($key = array_search('AUTO', $this->allowedCountries)) && $key !== FALSE) {
 			unset($this->allowedCountries[$key]);
 		}
@@ -154,7 +154,7 @@ class Phone extends Forms\Controls\TextInput
 	/**
 	 * @return array
 	 */
-	public function getAllowedCountries() : array
+	public function getAllowedCountries(): array
 	{
 		if (in_array('AUTO', $this->allowedCountries, TRUE) || $this->allowedCountries === []) {
 			return $this->phoneUtils->getSupportedCountries();
@@ -174,7 +174,6 @@ class Phone extends Forms\Controls\TextInput
 	{
 		if ($country === NULL) {
 			$this->defaultCountry = NULL;
-
 		} else {
 			$country = $this->validateCountry($country);
 
@@ -227,7 +226,7 @@ class Phone extends Forms\Controls\TextInput
 	/**
 	 * @return array
 	 */
-	public function getAllowedPhoneTypes() : array
+	public function getAllowedPhoneTypes(): array
 	{
 		return $this->allowedTypes;
 	}
@@ -257,7 +256,6 @@ class Phone extends Forms\Controls\TextInput
 
 				return $this;
 			}
-
 		} else {
 			foreach ($this->getAllowedCountries() as $country) {
 				if ($this->phoneUtils->isValid((string) $value, $country)) {
@@ -281,11 +279,10 @@ class Phone extends Forms\Controls\TextInput
 	 *
 	 * @throws Exceptions\InvalidArgumentException
 	 */
-	public function getValuePart(string $key) : string
+	public function getValuePart(string $key): string
 	{
 		if ($key === self::FIELD_COUNTRY) {
 			return $this->country;
-
 		} elseif ($key === self::FIELD_NUMBER) {
 			return $this->number;
 		}
@@ -305,10 +302,8 @@ class Phone extends Forms\Controls\TextInput
 		try {
 			// Try to parse number & country
 			return IPub\Phone\Entities\Phone::fromNumber($this->number, $this->country);
-
 		} catch (IPub\Phone\Exceptions\NoValidCountryException $ex) {
 			return FALSE;
-
 		} catch (IPub\Phone\Exceptions\NoValidPhoneException $ex) {
 			return FALSE;
 		}
@@ -319,7 +314,7 @@ class Phone extends Forms\Controls\TextInput
 	 *
 	 * @return void
 	 */
-	public function loadHttpData()
+	public function loadHttpData(): void
 	{
 		$country = $this->getHttpData(Forms\Form::DATA_LINE, '[' . self::FIELD_COUNTRY . ']');
 		$this->country = ($country === '' || $country === NULL) ? NULL : (string) $country;
@@ -331,7 +326,7 @@ class Phone extends Forms\Controls\TextInput
 	/**
 	 * @return Utils\Html
 	 */
-	public function getControl()
+	public function getControl(): Nette\Utils\Html
 	{
 		$el = Utils\Html::el();
 		$el->addHtml($this->getControlPart(self::FIELD_COUNTRY) . $this->getControlPart(self::FIELD_NUMBER));
@@ -344,7 +339,7 @@ class Phone extends Forms\Controls\TextInput
 	 *
 	 * @throws Exceptions\InvalidArgumentException
 	 */
-	public function getControlPart()
+	public function getControlPart(): ?Nette\Utils\Html
 	{
 		$args = func_get_args();
 		$key = reset($args);
@@ -360,7 +355,6 @@ class Phone extends Forms\Controls\TextInput
 			if ($translator instanceof Localization\ITranslator && method_exists($translator, 'getLocale') === TRUE) {
 				try {
 					$locale = $translator->getLocale();
-
 				} catch (\Exception $ex) {
 					$locale = 'en_US';
 				}
@@ -394,7 +388,9 @@ class Phone extends Forms\Controls\TextInput
 				'id'   => $this->getHtmlId() . '-' . self::FIELD_COUNTRY,
 			]);
 			$control->data('ipub-forms-phone', '');
-			$control->data('settings', json_encode([
+			$control->data(
+				'settings',
+				json_encode([
 					'field' => $name . '[' . self::FIELD_NUMBER . ']'
 				])
 			);
@@ -406,7 +402,6 @@ class Phone extends Forms\Controls\TextInput
 			}
 
 			return $control;
-
 		} elseif ($key === self::FIELD_NUMBER) {
 			$prototype = $this->getControlPrototype();
 
@@ -453,7 +448,7 @@ class Phone extends Forms\Controls\TextInput
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getLabelPart()
+	public function getLabelPart(): ?Nette\Utils\Html
 	{
 		return NULL;
 	}
@@ -465,14 +460,13 @@ class Phone extends Forms\Controls\TextInput
 	 *
 	 * @throws Exceptions\NoValidCountryException
 	 */
-	private function validateCountry(string $country) : string
+	private function validateCountry(string $country): string
 	{
 		// Country code have to be upper-cased
 		$country = strtoupper($country);
 
 		if ((strlen($country) === 2 && ctype_alpha($country) && ctype_upper($country) && in_array($country, $this->phoneUtils->getSupportedCountries())) || $country === 'AUTO') {
 			return $country;
-
 		} else {
 			throw new Exceptions\NoValidCountryException(sprintf('Provided country code "%s" is not valid. Provide valid country code or AUTO for automatic detection.', $country));
 		}
@@ -485,14 +479,13 @@ class Phone extends Forms\Controls\TextInput
 	 *
 	 * @throws Exceptions\NoValidTypeException
 	 */
-	private function validateType(string $type) : string
+	private function validateType(string $type): string
 	{
 		// Phone type have to be upper-cased
 		$type = strtoupper($type);
 
 		if (defined('\IPub\Phone\Phone::TYPE_' . $type)) {
 			return $type;
-
 		} else {
 			throw new Exceptions\NoValidTypeException(sprintf('Provided phone type "%s" is not valid. Provide valid phone type.', $type));
 		}
@@ -513,12 +506,13 @@ class Phone extends Forms\Controls\TextInput
 
 		$class = function_exists('get_called_class') ? get_called_class() : __CLASS__;
 		Forms\Container::extensionMethod(
-			$method, function (Forms\Container $form, $name, $label = NULL, $maxLength = NULL) use ($class, $phoneUtils) {
-			$component = new $class($phoneUtils, $label, $maxLength);
-			$form->addComponent($component, $name);
+			$method,
+			function (Forms\Container $form, $name, $label = NULL, $maxLength = NULL) use ($class, $phoneUtils) {
+				$component = new $class($phoneUtils, $label, $maxLength);
+				$form->addComponent($component, $name);
 
-			return $component;
-		}
+				return $component;
+			}
 		);
 	}
 }

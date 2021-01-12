@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PhoneValidator.php
  *
@@ -12,7 +13,7 @@
  * @date           12.12.15
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace IPub\FormPhone\Forms;
 
@@ -37,7 +38,7 @@ use Tracy\Debugger;
  *
  * @author         Adam Kadlec <adam.kadlec@fastybird.com>
  */
-class PhoneValidator extends Phone\Forms\PhoneValidator
+class PhoneValidator extends FormPhone\Forms\Validator
 {
 	/**
 	 * Define validator calling constant
@@ -52,7 +53,7 @@ class PhoneValidator extends Phone\Forms\PhoneValidator
 	 *
 	 * @throws Exceptions\NoValidCountryException
 	 */
-	public static function validatePhone(Forms\IControl $control, $params = []) : bool
+	public static function validatePhone(Forms\IControl $control, $params = []): bool
 	{
 		if (!$control instanceof Controls\Phone) {
 			throw new Exceptions\InvalidArgumentException(sprintf('This validator could be used only on text field. You used it on: "%s"', get_class($control)));
@@ -65,10 +66,8 @@ class PhoneValidator extends Phone\Forms\PhoneValidator
 		try {
 			// Create phone entity
 			$value = Phone\Entities\Phone::fromNumber($control->getValuePart(Controls\Phone::FIELD_NUMBER), $control->getValuePart(Controls\Phone::FIELD_COUNTRY));
-
 		} catch (Phone\Exceptions\NoValidCountryException $ex) {
 			return FALSE;
-
 		} catch (Phone\Exceptions\NoValidPhoneException $ex) {
 			return FALSE;
 		}
@@ -113,7 +112,6 @@ class PhoneValidator extends Phone\Forms\PhoneValidator
 							return TRUE;
 						}
 					}
-
 				} catch (libphonenumber\NumberParseException $ex) {
 					// Proceed to default validation error
 				}
