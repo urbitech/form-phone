@@ -41,3 +41,18 @@ For JavaScript part of this extension please checkout [JS documentation](https:/
 ---
 
 Homepage [http://www.ipublikuj.eu](http://www.ipublikuj.eu) and repository [http://github.com/iPublikuj/form-phone](http://github.com/iPublikuj/form-phone).
+
+SetUp of assets folder removement
+
+```json
+"config": {
+	"assets-files": {
+		"urbitech/form-phone": [
+			"src/assets/js"
+		]
+	},
+	"assets-target": {
+		"urbitech/forms": "www/assets/ipub-phone"
+	}
+}
+```
