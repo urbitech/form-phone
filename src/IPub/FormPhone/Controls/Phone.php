@@ -328,7 +328,7 @@ class Phone extends Forms\Controls\TextInput
 	 */
 	public function getControl(): Nette\Utils\Html
 	{
-		$el = Utils\Html::el();
+		$el = Utils\Html::el('div');
 		$el->addHtml($this->getControlPart(self::FIELD_COUNTRY) . $this->getControlPart(self::FIELD_NUMBER));
 
 		return $el;
@@ -383,9 +383,11 @@ class Phone extends Forms\Controls\TextInput
 				]
 			);
 
+			$prototype = $this->getControlPrototype();
 			$control->addAttributes([
 				'name' => $name . '[' . self::FIELD_COUNTRY . ']',
 				'id'   => $this->getHtmlId() . '-' . self::FIELD_COUNTRY,
+				'class' => $this->getOption('parts-class') ?: $prototype->getAttribute('class'),
 			]);
 			$control->data('ipub-forms-phone', '');
 			$control->data(
@@ -414,13 +416,18 @@ class Phone extends Forms\Controls\TextInput
 				'id'          => $this->getHtmlId() . '-' . self::FIELD_NUMBER,
 				'value'       => $this->number,
 				'type'        => 'text',
-				'class'       => $prototype->getAttribute('class'),
-				'placeholder' => $prototype->getAttribute('placeholder'),
+				'class' 	  => $this->getOption('parts-class') ?: $prototype->getAttribute('class'),
+				'placeholder' => $this->translate($prototype->getAttribute('placeholder')),
 				'title'       => $prototype->getAttribute('title')
 			]);
 
+			$rules = $this->modifyRulesControl($input->{'data-nette-rules'});
 			$control->data('nette-empty-value', Utils\Strings::trim($this->translate($this->emptyValue)));
-			$control->data('nette-rules', $input->{'data-nette-rules'});
+			$control->data('nette-rules', $rules);
+			$control->data('ipub-forms-phone-number', '');
+			if ($prototype->getAttribute('data-toggle-keyup')) {
+				$control->data('toggle-keyup', '');
+			}
 
 			if ($this->isDisabled()) {
 				$control->addAttributes([
@@ -433,6 +440,23 @@ class Phone extends Forms\Controls\TextInput
 
 		throw new Exceptions\InvalidArgumentException(sprintf('Part "%s" does not exist.', $key));
 	}
+
+
+	private function modifyRulesControl($rules)
+	{
+		foreach ($rules as $key => $rule) {
+			if (isset($rule['control'])) {
+				$rules[$key]['control'] .= '[' . self::FIELD_NUMBER . ']';
+			}
+
+			if (isset($rule['rules'])) {
+				$rules[$key]['rules'] = $this->modifyRulesControl($rule['rules']);
+			}
+		}
+
+		return $rules;
+	}
+
 
 	/**
 	 * {@inheritdoc}
